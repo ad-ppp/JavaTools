@@ -173,7 +173,7 @@ public class JarSearcher {
             throw new IllegalStateException(String.format("file[%s] is not exists", dir));
         }
 
-        JarSearcher.dir = dirPath;
+        JarSearcher.dir = dir.getAbsolutePath();
         JarSearcher.path = args[1];
 
         if (args.length == 3) {
