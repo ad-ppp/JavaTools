@@ -1,0 +1,54 @@
+apply plugin: 'application'
+apply plugin: 'java'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+ext {
+    javaMainClass = "com.jacky.tools.JarSearcher"
+}
+
+application {
+    mainClassName = javaMainClass
+}
+
+jar {
+    manifestContentCharset 'utf-8'
+    metadataCharset 'utf-8'
+
+    manifest {
+        attributes 'Main-Class': "${mainClassName}"
+        attributes 'Manifest-Version': '1.0.1'
+        attributes 'Author': 'jacky'
+    }
+    from {
+        configurations.compile.collect {
+            println "compile it path: ${it.getAbsolutePath()}"
+            it.isDirectory() ? it : zipTree(it)
+        }
+        configurations.runtime.collect {
+            println "runtime it path: ${it.getAbsolutePath()}"
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+task clearJar(type: Delete) {
+    delete 'build/libs/lib'
+}
+
+task copyJar(type: Copy) {
+    from "${project.buildDir}/libs/${project.name}.jar"
+    into "${project.rootProject.getRootDir()}/tools/"
+}
+
+task release(type: Copy, dependsOn: [build, clearJar, copyJar])
+
+// run JarSearcher#main
+task runWithJarSearcher(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = javaMainClass
+}

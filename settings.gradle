@@ -1,0 +1,4 @@
+include ':app', ':jar-searcher'
+rootProject.name = 'JavaTools'
+
+project(':jar-searcher').projectDir = new File(settingsDir, './library/jar-searcher')
