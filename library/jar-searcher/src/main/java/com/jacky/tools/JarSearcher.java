@@ -62,7 +62,7 @@ public class JarSearcher {
     private static void dumpTrace() throws IOException {
         if (traceDir != null) {
             final Date date = new Date(System.currentTimeMillis());
-            final String format = new SimpleDateFormat("MM-dd_HH:mm").format(date);
+            final String format = new SimpleDateFormat("MM_dd_HH_mm").format(date);
             final String fileName = format + "_trace.txt";
             final File file = new File(traceDir, fileName);
 
@@ -145,7 +145,7 @@ public class JarSearcher {
     }
 
     private static boolean containsIgnoreCase(String classPath) {
-        return classPath.toLowerCase().contains(JarSearcher.path);
+        return classPath.toLowerCase().contains(JarSearcher.path.toLowerCase());
     }
 
     private static void captureTarget(String targetPath) {
