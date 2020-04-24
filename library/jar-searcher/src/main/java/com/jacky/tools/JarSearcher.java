@@ -46,10 +46,10 @@ public class JarSearcher {
 
     private static void dumpResult() {
         if (targets.isEmpty()) {
-            log("No Result for %s in Path[$s]", path, dir);
+            log("No Result for %s in Path:\n[%s]\n", path, dir);
             return;
         }
-        log("Found result for %s in Path[$s]", path, dir);
+        log("Found result for %s in Path\n[%s]\n", path, dir);
         final Iterator<String> iterator = targets.iterator();
         int index = 0;
         while (iterator.hasNext()) {
