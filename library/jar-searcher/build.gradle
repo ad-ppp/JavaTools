@@ -2,7 +2,9 @@ apply plugin: 'application'
 apply plugin: 'java'
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // 一定要是compile模式，否则打包jar的时候，configurations.compile没有值
+    compile project(':base-tool-lib')
 }
 
 ext {
@@ -19,16 +21,13 @@ jar {
 
     manifest {
         attributes 'Main-Class': "${mainClassName}"
-        attributes 'Manifest-Version': '1.0.1'
+        attributes 'Manifest-Version': '1.0.3'
         attributes 'Author': 'jacky'
     }
+
     from {
         configurations.compile.collect {
             println "compile it path: ${it.getAbsolutePath()}"
-            it.isDirectory() ? it : zipTree(it)
-        }
-        configurations.runtime.collect {
-            println "runtime it path: ${it.getAbsolutePath()}"
             it.isDirectory() ? it : zipTree(it)
         }
     }
@@ -46,7 +45,7 @@ task copyJar(type: Copy) {
 task release(type: Copy, dependsOn: [build, clearJar, copyJar])
 
 // run JarSearcher#main
-task runWithJarSearcher(type: JavaExec) {
+task runMain(type: JavaExec) {
     group = "Execution"
     description = "Run the main class with JavaExecTask"
     classpath = sourceSets.main.runtimeClasspath

@@ -13,7 +13,7 @@ __rp_deploy_project(){
 }
 
 rp_deploy() {
-    for p in ${TARGET_PROJECTS[@]}; do __rp_deploy_project ${p}; done
+   for p in ${TARGET_PROJECTS[@]}; do __rp_deploy_project ${p}; done
 }
 
 rp_deploy

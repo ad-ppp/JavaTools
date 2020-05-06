@@ -5,7 +5,7 @@
 #### Helper
 
 1. Run with gradle debug mode
-`gradle runWithjavaExec -Dorg.gradle.debug=true  --no-daemon`
+`gradle runWithMain -Dorg.gradle.debug=true  --no-daemon`
 
 2. Define task for running JarSearcher#main
 see build.gradle of app. See[gradle-run-java-main](https://www.baeldung.com/gradle-run-java-main)

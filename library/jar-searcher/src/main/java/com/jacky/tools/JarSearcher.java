@@ -1,6 +1,7 @@
 package com.jacky.tools;
 
-import java.io.Closeable;
+import com.jacky.tool.base.BaseTool;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,22 +13,36 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JarSearcher {
-    private static String dir;
-    private static String path;
-    private static String traceDir;
-    private static final Set<String> targets = new HashSet<>();
-    private static final Set<String> traces = new HashSet<>();
-    private static final List<String> zipSuffix = Arrays.asList(".jar", ".zip");
+public class JarSearcher extends BaseTool {
+    private String dir;
+    private String path;
+    private String traceDir;
+    private final Set<String> targets = new HashSet<>();
+    private final Set<String> traces = new HashSet<>();
+    private final List<String> zipSuffix = Arrays.asList(".jar", ".zip");
+
+    public JarSearcher(String[] args) {
+        super(args);
+    }
 
     public static void main(String[] args) {
-        if (checkHelp(args)) return;
-        final File dir = checker(args);
-        startSearch(dir);
+        new JarSearcher(args).start();
+    }
+
+    @Override
+    public void handlerArgs() {
+        log("===============================Params===============================");
+        log("search:\n[%s]", this.dir);
+        log("path:\n[%s]", this.path);
+        log("%s", "\n\n\n");
+
+        final File fileDir = new File(dir);
+        startSearch(fileDir);
         dumpResult();
         try {
             dumpTrace();
@@ -36,15 +51,48 @@ public class JarSearcher {
         }
     }
 
-    private static boolean checkHelp(String[] args) {
-        if (args.length == 1 && args[0].equals("-h")) {
-            showUserGuide();
-            return true;
+    @Override
+    public void checkArgs() {
+        if (args.length < 2) {
+            throw new IllegalArgumentException("please input dir and fileName");
         }
-        return false;
+
+        final String dirPath = args[0];
+        final File dir = new File(dirPath);
+        if (!dir.exists()) {
+            throw new IllegalStateException(String.format("file[%s] is not exists", dir));
+        }
+
+        this.dir = dir.getAbsolutePath();
+        this.path = args[1];
+
+        if (args.length == 3) {
+            final String traceDir = args[2];
+            final File traceFile = new File(traceDir);
+            if (!traceFile.exists() && traceFile.isFile()) {
+                throw new IllegalArgumentException(
+                    String.format("the dir[%s] for trace is not exists or is a file", traceDir)
+                );
+            }
+
+            this.traceDir = traceDir;
+        }
     }
 
-    private static void dumpResult() {
+    @Override
+    public void showUserGuide() {
+        log("===============================help===============================");
+        log("%s", "The tool is intent to search file in dir or jar/zip file");
+        log("%s", "GIT URL: git@github.com:ad-ppp/JavaTools.git");
+        log("%s", "-h for helper");
+        log("%s", "The arguments are as followers:");
+        log("\t%s", "1) the path for dir or file ");
+        log("\t%s", "2) the file name to be searched");
+        log("\t%s", "3) the path for output trace");
+        log("%s", "\n");
+    }
+
+    private void dumpResult() {
         if (targets.isEmpty()) {
             log("No Result for %s in Path:\n[%s]\n", path, dir);
             return;
@@ -59,10 +107,10 @@ public class JarSearcher {
         log("================================end================================");
     }
 
-    private static void dumpTrace() throws IOException {
+    private void dumpTrace() throws IOException {
         if (traceDir != null) {
             final Date date = new Date(System.currentTimeMillis());
-            final String format = new SimpleDateFormat("MM_dd_HH_mm").format(date);
+            final String format = new SimpleDateFormat("MM_dd_HH_mm", Locale.ENGLISH).format(date);
             final String fileName = format + "_trace.txt";
             final File file = new File(traceDir, fileName);
 
@@ -85,13 +133,16 @@ public class JarSearcher {
         }
     }
 
-    private static void startSearch(File file) {
+    private void startSearch(File file) {
         if (file.isDirectory()) {
-            for (File listFile : file.listFiles()) {
-                if (listFile.isFile()) {
-                    searchFile(listFile);
-                } else if (listFile.isDirectory()) {
-                    startSearch(listFile);
+            final File[] files = file.listFiles();
+            if (files != null) {
+                for (File listFile : files) {
+                    if (listFile.isFile()) {
+                        searchFile(listFile);
+                    } else if (listFile.isDirectory()) {
+                        startSearch(listFile);
+                    }
                 }
             }
         } else {
@@ -99,7 +150,7 @@ public class JarSearcher {
         }
     }
 
-    private static void searchFile(File listFile) {
+    private void searchFile(File listFile) {
         if (isZipOrJar(listFile)) {
             if (!tryJarEntry(listFile)) {
                 tryFile(listFile);
@@ -109,7 +160,7 @@ public class JarSearcher {
         }
     }
 
-    private static void tryFile(File listFile) {
+    private void tryFile(File listFile) {
         final String classPath = flatDirToClass(listFile.getAbsolutePath());
         traces.add(String.format("[file:%s]: \n%s\n"
             , simplyPath(listFile.getAbsolutePath())
@@ -119,7 +170,7 @@ public class JarSearcher {
         }
     }
 
-    private static boolean tryJarEntry(File listFile) {
+    private boolean tryJarEntry(File listFile) {
         JarFile jarFile = null;
         try {
             jarFile = new JarFile(listFile);
@@ -144,70 +195,25 @@ public class JarSearcher {
         return true;
     }
 
-    private static boolean containsIgnoreCase(String classPath) {
-        return classPath.toLowerCase().contains(JarSearcher.path.toLowerCase());
+    private boolean containsIgnoreCase(String classPath) {
+        return classPath.toLowerCase().contains(path.toLowerCase());
     }
 
-    private static void captureTarget(String targetPath) {
+    private void captureTarget(String targetPath) {
         targets.add(targetPath);
     }
 
-    private static String flatDirToClass(String absolutePath) {
+    private String flatDirToClass(String absolutePath) {
         return absolutePath
-            .replace(JarSearcher.dir, "")
+            .replace(dir, "")
             .replace("/", ".");
     }
 
-    private static String simplyPath(String fullPath) {
+    private String simplyPath(String fullPath) {
         return fullPath.replace(dir, "");
     }
 
-    private static File checker(String[] args) {
-        if (args.length < 2) {
-            throw new IllegalArgumentException("please input dir and fileName");
-        }
-
-        final String dirPath = args[0];
-        final File dir = new File(dirPath);
-        if (!dir.exists()) {
-            throw new IllegalStateException(String.format("file[%s] is not exists", dir));
-        }
-
-        JarSearcher.dir = dir.getAbsolutePath();
-        JarSearcher.path = args[1];
-
-        if (args.length == 3) {
-            final String traceDir = args[2];
-            final File traceFile = new File(traceDir);
-            if (!traceFile.exists() && traceFile.isFile()) {
-                throw new IllegalArgumentException(
-                    String.format("the dir[%s] for trace is not exists or is a file", traceDir)
-                );
-            }
-
-            JarSearcher.traceDir = traceDir;
-        }
-
-        log("===============================Search===============================");
-        log("search:\n[%s]", JarSearcher.dir);
-        log("path:\n[%s]", JarSearcher.path);
-        log("%s", "\n\n\n");
-        return dir;
-    }
-
-    private static void showUserGuide() {
-        log("===============================help===============================");
-        log("%s", "The tool is intent to search file in dir or jar/zip file");
-        log("%s", "GIT URL: git@github.com:ad-ppp/JavaTools.git");
-        log("%s", "-h for helper");
-        log("%s", "The arguments are as followers:");
-        log("\t%s", "1) the path for dir or file ");
-        log("\t%s", "2) the file name of searched");
-        log("\t%s", "3) the path for output trace");
-        log("%s", "\n");
-    }
-
-    private static boolean isZipOrJar(File listFile) {
+    private boolean isZipOrJar(File listFile) {
         for (String suffix : zipSuffix) {
             if (listFile.getAbsolutePath().endsWith(suffix)) {
                 return true;
@@ -215,19 +221,5 @@ public class JarSearcher {
         }
 
         return false;
-    }
-
-    private static void closeQuite(Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void log(String format, Object... args) {
-        System.out.println(String.format(format, args));
     }
 }
