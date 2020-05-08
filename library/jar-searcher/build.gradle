@@ -1,18 +1,20 @@
-apply plugin: 'application'
+import org.gradle.api.internal.artifacts.configurations.DefaultConfiguration
+
 apply plugin: 'java'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    // 一定要是compile模式，否则打包jar的时候，configurations.compile没有值
-    compile project(':base-tool-lib')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':base-tool-lib')
 }
 
 ext {
     javaMainClass = "com.jacky.tools.JarSearcher"
 }
 
-application {
-    mainClassName = javaMainClass
+project.afterEvaluate {
+    def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
+    canBeResolvedField.setAccessible(true)
+    canBeResolvedField.set(configurations.implementation, true)
 }
 
 jar {
@@ -20,14 +22,26 @@ jar {
     metadataCharset 'utf-8'
 
     manifest {
-        attributes 'Main-Class': "${mainClassName}"
-        attributes 'Manifest-Version': '1.0.3'
+        attributes 'Main-Class': "${javaMainClass}"
+        attributes 'Manifest-Version': '1.0.4'
         attributes 'Author': 'jacky'
     }
 
     from {
-        configurations.compile.collect {
-            println "compile it path: ${it.getAbsolutePath()}"
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        configurations.implementation.resolve().collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    from {
+        exclude 'META-INF/MANIFEST.MF'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        configurations.runtime.resolve().collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
