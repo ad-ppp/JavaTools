@@ -1,5 +1,7 @@
-include ':app', ':jar-searcher', ':base-tool-lib'
+include ':app', ':jar-searcher', ':base-tool-lib', ':bulgy-report', ':asm-tools'
 rootProject.name = 'JavaTools'
 
 project(':base-tool-lib').projectDir = new File(settingsDir, './library/base-tool-lib')
 project(':jar-searcher').projectDir = new File(settingsDir, './library/jar-searcher')
+project(':bulgy-report').projectDir = new File(settingsDir, './library/bulgy-report')
+project(':asm-tools').projectDir = new File(settingsDir, './library/asm-tools')

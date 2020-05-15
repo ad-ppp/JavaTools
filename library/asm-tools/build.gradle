@@ -1,0 +1,13 @@
+import org.gradle.api.internal.artifacts.configurations.DefaultConfiguration
+
+apply plugin: 'java'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+project.afterEvaluate {
+    def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
+    canBeResolvedField.setAccessible(true)
+    canBeResolvedField.set(configurations.implementation, true)
+}
