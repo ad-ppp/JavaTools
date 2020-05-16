@@ -1,6 +1,7 @@
 #!/bin/bash
 export TARGET_PROJECTS=(
 	":jar-searcher"
+	":asm-tools"
 )
 
 __gradle_exec(){
