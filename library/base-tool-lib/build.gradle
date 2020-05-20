@@ -25,12 +25,20 @@ jar {
 }
 
 task clearJar(type: Delete) {
-    delete 'build/libs/lib'
+    println "task clearJar"
+
+    delete 'build/libs/'
 }
 
 task copyJar(type: Copy) {
+    println "task copyJar"
+
     from "${project.buildDir}/libs/${project.name}.jar"
     into "${project.rootProject.getRootDir()}/tools/base/"
 }
 
-task release(type: Copy, dependsOn: [build, clearJar, copyJar])
+task release(type: Copy, dependsOn: [build, copyJar]) {
+    delete 'build/libs/'
+}
+
+apply from: './test.gradle'

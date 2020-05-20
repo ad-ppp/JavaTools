@@ -14,6 +14,8 @@ __rp_deploy_project(){
 }
 
 rp_deploy() {
+   __gradle_exec ':base-tool-lib:clean' ':base-tool-lib:release'
+   echo ":base-tool-lib:clean" ":base-tool-lib:release"
    for p in ${TARGET_PROJECTS[@]}; do __rp_deploy_project ${p}; done
 }
 

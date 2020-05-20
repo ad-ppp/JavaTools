@@ -1,0 +1,36 @@
+task a {
+    println "a"
+}
+
+// exe 类型
+task exeSomething(type: Exec) {
+    commandLine([
+            'echo',
+            'hello',
+            'world',
+            'to you!!'
+    ])
+
+    def path = "${project.rootDir.getAbsolutePath()}"
+    println "path==>$path"
+    // 用jar-searcher库，查找本工程里面文件名包含 gradle.properties 的文件
+    commandLine([
+            "java",
+            "-jar",
+            "$path/tools/jar-searcher.jar",
+            "$path",
+            'gradle.properties'
+    ])
+
+    println "IIIIIIII"
+}
+
+task exeMain(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main =  "com.jacky.tool.test.TestMain"
+}
+
+println "a:${a.toString()}"
+println "exeSomething:${exeSomething.toString()}"

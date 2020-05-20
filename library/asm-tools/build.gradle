@@ -4,6 +4,7 @@ apply plugin: 'java'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':base-tool-lib')
 }
 
 project.afterEvaluate {

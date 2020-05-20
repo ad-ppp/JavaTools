@@ -5,6 +5,7 @@ import com.jacky.tool.base.BaseTool;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -80,16 +81,8 @@ public class JarSearcher extends BaseTool {
     }
 
     @Override
-    public void showUserGuide() {
-        log("===============================help===============================");
-        log("%s", "The tool is intent to search file in dir or jar/zip file");
-        log("%s", "GIT URL: git@github.com:ad-ppp/JavaTools.git");
-        log("%s", "-h for helper");
-        log("%s", "The arguments are as followers:");
-        log("\t%s", "1) the path for dir or file ");
-        log("\t%s", "2) the file name to be searched");
-        log("\t%s", "3) the path for output trace");
-        log("%s", "\n");
+    public InputStream helpStream() {
+        return getClass().getClassLoader().getResourceAsStream("jar-searcher.helper");
     }
 
     private void dumpResult() {

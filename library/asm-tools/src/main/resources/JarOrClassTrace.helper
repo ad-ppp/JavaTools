@@ -1,0 +1,5 @@
+# 用于Jar或者class的字节码搜索工具
+Options：
+    -c: 指定class的路径，如果有多个class，用";"号分割
+    -j: 指定jar的路径，如果有多个class，用";"号分割
+    -t: Optional 参数，指定输出的Trace路径
