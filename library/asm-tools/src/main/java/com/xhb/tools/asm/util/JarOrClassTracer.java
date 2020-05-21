@@ -2,8 +2,6 @@ package com.xhb.tools.asm.util;
 
 import com.jacky.tool.base.BaseTool;
 
-import org.objectweb.asm.ClassReader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -47,10 +45,17 @@ public class JarOrClassTracer extends BaseTool {
     public void handlerArgs() {
         final OutputStream outputStream;
         try {
+            File file = null;
+            if (tracePath != null) {
+                file = new File(tracePath);
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
             outputStream = tracePath == null ?
-                System.out : new FileOutputStream(tracePath, true);
+                System.out : new FileOutputStream(file, true);
             printWriter = new PrintWriter(outputStream);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -72,6 +77,10 @@ public class JarOrClassTracer extends BaseTool {
                 final Enumeration<? extends ZipEntry> entries = zipFile.entries();
                 while (entries.hasMoreElements()) {
                     final ZipEntry zipEntry = entries.nextElement();
+                    if (!zipEntry.getName().endsWith(".class")) {
+                        continue;
+                    }
+
                     final InputStream inputStream = zipFile.getInputStream(zipEntry);
                     traceClass(jarPath, zipEntry.getName(), inputStream);
                 }
@@ -91,11 +100,10 @@ public class JarOrClassTracer extends BaseTool {
             if (jarPath != null) {
                 printWriter
                     .append("start trace jar:").append(jarPath)
-                    .append("\nname").append(name)
+                    .append("\nname：").append(name.replace("/","."))
                     .append("\n");
             }
 
-            ClassReader classReader = new ClassReader(inputStream);
             final VisitTrace visitTrace = new VisitTrace();
             visitTrace.start(inputStream, printWriter);
             printWriter.append("\n");

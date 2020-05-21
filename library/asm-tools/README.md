@@ -7,6 +7,10 @@
 #### VisitTrace
 通过 ASM-TraceClassVisitor ,将class字节码显示到 System.out
 
+#### JarOrClassTracer
+通过 ASM-TraceClassVisitor，将jar or class文件visitor过程输出到 PrintWriter
+- `java -cp $asm-tools.jar com.xhb.tools.asm.util.JarOrClassTracer`
+
 ---
 
 ## 几个工具对比

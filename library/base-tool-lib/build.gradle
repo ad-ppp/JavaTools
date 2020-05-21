@@ -33,12 +33,31 @@ task clearJar(type: Delete) {
 task copyJar(type: Copy) {
     println "task copyJar"
 
-    from "${project.buildDir}/libs/${project.name}.jar"
+    def file = new File("${project.buildDir}/libs/${project.name}.jar")
+    doFirst {
+        println "copyJar check file exist!"
+        if (!file.exists()) {
+            throw new IllegalStateException("no file exists")
+        }
+    }
+
+    from file
     into "${project.rootProject.getRootDir()}/tools/base/"
 }
 
-task release(type: Copy, dependsOn: [build, copyJar]) {
-    delete 'build/libs/'
+task release {
+    dependsOn = [build, copyJar]
+    doFirst {
+        println "release doFirst"
+    }
+
+    doLast {
+        println "release doLast"
+    }
 }
 
+// 指定任务 clearJar 必须在 copyJar 之后执行
+//clearJar.mustRunAfter copyJar
+
+// for testing
 apply from: './test.gradle'
