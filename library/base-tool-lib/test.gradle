@@ -29,7 +29,7 @@ task exeMain(type: JavaExec) {
     group = "Execution"
     description = "Run the main class with JavaExecTask"
     classpath = sourceSets.main.runtimeClasspath
-    main =  "com.jacky.tool.test.TestMain"
+    main = "com.jacky.tool.test.TestMain"
 }
 
 println "a:${a.toString()}"

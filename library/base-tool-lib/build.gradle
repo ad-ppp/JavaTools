@@ -1,8 +1,21 @@
+import org.gradle.api.internal.artifacts.configurations.DefaultConfiguration
+
 apply plugin: 'java-library'
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api "com.beust:jcommander:1.71"
 }
+
+project.afterEvaluate {
+    def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
+    canBeResolvedField.setAccessible(true)
+    canBeResolvedField.set(configurations.implementation, true)
+    canBeResolvedField.set(configurations.api, true)
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
 
 jar {
     manifestContentCharset 'utf-8'
@@ -13,8 +26,12 @@ jar {
         attributes 'Author': 'jacky'
     }
     from {
-        configurations.compile.collect {
-            println "compile it path: ${it.getAbsolutePath()}"
+        configurations.api.collect {
+            println "api it path: ${it.getAbsolutePath()}"
+            it.isDirectory() ? it : zipTree(it)
+        }
+        configurations.implementation.collect {
+            println "implementation it path: ${it.getAbsolutePath()}"
             it.isDirectory() ? it : zipTree(it)
         }
         configurations.runtime.collect {

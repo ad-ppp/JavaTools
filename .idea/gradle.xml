@@ -12,10 +12,12 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/library/apk-tool" />
             <option value="$PROJECT_DIR$/library/asm-tools" />
             <option value="$PROJECT_DIR$/library/base-tool-lib" />
             <option value="$PROJECT_DIR$/library/bulgy-report" />
             <option value="$PROJECT_DIR$/library/jar-searcher" />
+            <option value="$PROJECT_DIR$/library/java-test-main" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

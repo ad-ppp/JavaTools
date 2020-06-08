@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public abstract class BaseTool {
-    public static final String PARAM_DIVIDER = ";";
+    protected static final String PARAM_DIVIDER = ";";
     protected final String[] args;
 
     public BaseTool(String[] args) {
