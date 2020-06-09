@@ -1,4 +1,4 @@
-package com.jacky.demo.test.cas;
+package com.jacky.demo.test.concurrent.cas;
 
 import com.jacky.tool.util.Util;
 
