@@ -1,5 +1,9 @@
 package com.jacky.tool.util;
 
+import java.lang.reflect.Field;
+
+import sun.misc.Unsafe;
+
 /**
  * Created by Jacky on 2020/5/23
  */
@@ -22,11 +26,26 @@ public class Util {
         new Thread(runnable, threadName).start();
     }
 
-    public static void sleepSafely(long time){
+    public static boolean sleepSafely(long time) {
         try {
             Thread.sleep(time);
+            return true;
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public static Unsafe getUnsafe() {
+        final Class<?> unSafeClass;
+        try {
+            unSafeClass = Class.forName("sun.misc.Unsafe");
+            final Field field = unSafeClass.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            return (Unsafe) field.get(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
