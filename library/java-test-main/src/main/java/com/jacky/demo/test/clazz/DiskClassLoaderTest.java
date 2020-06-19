@@ -21,6 +21,8 @@ public class DiskClassLoaderTest {
             Util.i("classLoader: %s", entry);
             entry = entry.getParent();
         }
+
+        Util.i("DiskClassLoaderTest classLoader:%s", DiskClassLoaderTest.class.getClassLoader());
     }
 
     public static void main(String[] args) {
