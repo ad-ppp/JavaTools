@@ -1,9 +1,8 @@
 package com.jacky.tool.util;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import sun.misc.Unsafe;
 
@@ -37,6 +36,16 @@ public class Util {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static void closeQuietly(Closeable closeable){
+        if (closeable!=null){
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static Unsafe getUnsafe() {
