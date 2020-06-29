@@ -1,11 +1,15 @@
 package com.jacky.tools;
 
 import com.jacky.tool.base.BaseTool;
+import com.jacky.tool.util.Util;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -21,11 +25,18 @@ import java.util.jar.JarFile;
 
 public class JarSearcher extends BaseTool {
     private String dir;
-    private String path;
+    private String text;
     private String traceDir;
     private final Set<String> targets = new HashSet<>();
     private final Set<String> traces = new HashSet<>();
-    private final List<String> zipSuffix = Arrays.asList(".jar", ".zip");
+    private final List<String> zipSuffix = Arrays.asList(".jar", ".zip", ".aar");
+
+
+    private static final String FOR_TEXT = "-t";
+
+    private final int SEARCH_FILE = 1;
+    private final int SEARCH_TEXT = 2;
+    private int searchMode = SEARCH_FILE;
 
     public JarSearcher(String[] args) {
         super(args);
@@ -35,11 +46,19 @@ public class JarSearcher extends BaseTool {
         new JarSearcher(args).start();
     }
 
+    private boolean isSearchFile() {
+        return searchMode == SEARCH_FILE;
+    }
+
+    private boolean isSearchText() {
+        return searchMode == SEARCH_TEXT;
+    }
+
     @Override
     public void handlerArgs() {
         log("===============================Params===============================");
         log("search:\n[%s]", this.dir);
-        log("path:\n[%s]", this.path);
+        log("path:\n[%s]", this.text);
         log("%s", "\n\n\n");
 
         final File fileDir = new File(dir);
@@ -65,10 +84,22 @@ public class JarSearcher extends BaseTool {
         }
 
         this.dir = dir.getAbsolutePath();
-        this.path = args[1];
 
-        if (args.length == 3) {
-            final String traceDir = args[2];
+        int index;
+        if (args[1].trim().equals(FOR_TEXT)) {
+            searchMode = SEARCH_TEXT;
+            index = 2;
+        } else {
+            index = 1;
+        }
+        text = args[index];
+
+        if (text == null || text.equals("")) {
+            throw new IllegalArgumentException();
+        }
+
+        if (args.length == (index + 1) + 1) {
+            final String traceDir = args[index + 1];
             final File traceFile = new File(traceDir);
             if (!traceFile.exists() && traceFile.isFile()) {
                 throw new IllegalArgumentException(
@@ -87,10 +118,10 @@ public class JarSearcher extends BaseTool {
 
     private void dumpResult() {
         if (targets.isEmpty()) {
-            log("No Result for %s in Path:\n[%s]\n", path, dir);
+            log("No Result for %s in Path:\n[%s]\n", text, dir);
             return;
         }
-        log("Found result for %s in Path\n[%s]\n", path, dir);
+        log("Found result for %s in Path\n[%s]\n", text, dir);
         final Iterator<String> iterator = targets.iterator();
         int index = 0;
         while (iterator.hasNext()) {
@@ -158,8 +189,37 @@ public class JarSearcher extends BaseTool {
         traces.add(String.format("[file:%s]: \n%s\n"
             , simplyPath(listFile.getAbsolutePath())
             , simplyPath(classPath)));
-        if (containsIgnoreCase(classPath)) {
-            captureTarget(listFile.getAbsolutePath());
+
+        if (isSearchText()) {
+            try {
+                tryHitStream(new FileInputStream(listFile), listFile.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (isSearchFile()) {
+            if (containsIgnoreCase(classPath)) {
+                captureTarget(listFile.getAbsolutePath());
+            }
+        }
+    }
+
+    private void tryHitStream(InputStream inputStream, String path) throws Exception {
+        BufferedReader bufferedReader = null;
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (line.contains(text)) {
+                    // hit
+                    captureTarget(path);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            Util.closeQuietly(bufferedReader);
+            Util.closeQuietly(inputStream);
         }
     }
 
@@ -174,8 +234,17 @@ public class JarSearcher extends BaseTool {
                 traces.add(String.format("[jar:%s]: \n%s\n"
                     , simplyPath(listFile.getAbsolutePath())
                     , simplyPath(classPath)));
-                if (containsIgnoreCase(classPath)) {
-                    captureTarget(listFile.getAbsolutePath());
+
+                if (isSearchText()) {
+                    try {
+                        tryHitStream(jarFile.getInputStream(jarEntry), jarEntry.getName());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else if (isSearchFile()) {
+                    if (containsIgnoreCase(classPath)) {
+                        captureTarget(listFile.getAbsolutePath());
+                    }
                 }
             }
         } catch (IOException e) {
@@ -189,7 +258,7 @@ public class JarSearcher extends BaseTool {
     }
 
     private boolean containsIgnoreCase(String classPath) {
-        return classPath.toLowerCase().contains(path.toLowerCase());
+        return classPath.toLowerCase().contains(text.toLowerCase());
     }
 
     private void captureTarget(String targetPath) {

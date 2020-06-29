@@ -34,14 +34,14 @@ public class Sqlite3Test implements Closeable {
 
     private void createVT() throws Exception {
         final Statement statement = connection.createStatement();
-        /**
+        /*
          * SQL error or missing database (unknown tokenizer: icu)
          * "CREATE VIRTUAL TABLE IF NOT EXISTS messages USING fts3(id, content, tokenize=icu);";
          */
         final String CREATE_MESSAGE =
             "CREATE VIRTUAL TABLE IF NOT EXISTS "
                 + TABLE_MESSAGE
-                + " USING fts3(id, content);";
+                + " USING fts3(id, content, tokenize=);";
         statement.execute(CREATE_MESSAGE);
     }
 

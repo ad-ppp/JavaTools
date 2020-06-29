@@ -1,6 +1,7 @@
 The tool is intent to search file in dir or jar/zip file
 GIT URL: git@github.com:ad-ppp/JavaTools.git
 -h for helper"
+-t for search text
 
 The arguments are as followers:
     1) the path for dir or file
