@@ -17,4 +17,12 @@ def deploy = [
 ]
 ext.deploy = deploy
 
+sourceSets {
+    main {
+        resources {
+            srcDirs "./jenkins.properties"
+        }
+    }
+}
+
 apply from: "${project.getRootDir()}/config/jar.gradle"

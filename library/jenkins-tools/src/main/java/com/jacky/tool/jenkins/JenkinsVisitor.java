@@ -56,14 +56,16 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
     public final static String JENKINS_NAME = "JENKINS_NAME";
     public final static String JENKINS_TOKEN = "JENKINS_TOKEN";
 
+    public final static String CONFIG_FILE = "jenkins.properties";
 
     public static void main(String[] args) {
         try {
             // read name and token
-            final File file = new File("./local.properties");
+            final File file = new File("./" + CONFIG_FILE);
             if (!file.exists()) {
-                throw new IllegalStateException("You should config " + JENKINS_NAME + " and " + JENKINS_TOKEN + " in " +
-                    "local.properties and the file is not exist");
+                throw new IllegalStateException("You should config " + JENKINS_NAME + " and "
+                    + JENKINS_TOKEN + " in " + CONFIG_FILE +
+                    " and the file is not exist");
             }
 
             String name = null;
@@ -91,7 +93,7 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
 
             if (Strings.isNullOrEmpty(name)) {
                 throw new IllegalStateException("You should config " + JENKINS_NAME
-                    + " and " + JENKINS_TOKEN + " in local.properties ");
+                    + " and " + JENKINS_TOKEN + " in " + CONFIG_FILE);
             }
 
             final URI uri = new URI("https://jenkins.xiaoheiban.cn/");
