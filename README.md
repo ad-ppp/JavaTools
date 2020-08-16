@@ -10,3 +10,4 @@ java test by jdk: `/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Ho
     - copy
     - VisitTrace
     - JarOrClassTracer
+- [jenkins-tools](./library/jenkins-tools)
