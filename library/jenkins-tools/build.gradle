@@ -1,0 +1,20 @@
+apply plugin: 'java'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.offbytwo.jenkins:jenkins-client:0.3.8'
+    implementation 'com.alibaba:fastjson:1.2.73'
+    implementation project(':base-tool-lib')
+}
+
+ext {
+    javaMainClass = "com.jacky.tool.jenkins.JenkinsVisitor"
+}
+
+def deploy = [
+        'version': '1.0.0',
+        'author' : 'jacky'
+]
+ext.deploy = deploy
+
+apply from: "${project.getRootDir()}/config/jar.gradle"

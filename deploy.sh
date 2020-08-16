@@ -2,6 +2,7 @@
 export TARGET_PROJECTS=(
 	":jar-searcher"
 	":asm-tools"
+	":jenkins-tools"
 )
 
 __gradle_exec(){

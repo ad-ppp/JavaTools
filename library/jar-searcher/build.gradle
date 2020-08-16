@@ -11,57 +11,10 @@ ext {
     javaMainClass = "com.jacky.tools.JarSearcher"
 }
 
-project.afterEvaluate {
-    def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
-    canBeResolvedField.setAccessible(true)
-    canBeResolvedField.set(configurations.implementation, true)
-}
+def deploy = [
+        'version': '1.0.5',
+        'author' : 'jacky'
+]
+ext.deploy = deploy
 
-jar {
-    manifestContentCharset 'utf-8'
-    metadataCharset 'utf-8'
-
-    manifest {
-        attributes 'Main-Class': "${javaMainClass}"
-        attributes 'Manifest-Version': '1.0.4'
-        attributes 'Author': 'jacky'
-    }
-
-    from {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-        configurations.implementation.resolve().collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    from {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-        configurations.runtime.resolve().collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-}
-
-task clearJar(type: Delete) {
-    delete 'build/libs/lib'
-}
-
-task copyJar(type: Copy) {
-    from "${project.buildDir}/libs/${project.name}.jar"
-    into "${project.rootProject.getRootDir()}/tools/"
-}
-
-task release(type: Copy, dependsOn: [build, clearJar, copyJar])
-
-// run JarSearcher#main
-task runMain(type: JavaExec) {
-    group = "Execution"
-    description = "Run the main class with JavaExecTask"
-    classpath = sourceSets.main.runtimeClasspath
-    main = javaMainClass
-}
+apply from: "${project.getRootDir()}/config/jar.gradle"

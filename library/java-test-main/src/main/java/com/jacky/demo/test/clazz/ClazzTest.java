@@ -57,6 +57,9 @@ public final class ClazzTest {
 
             // BootstrapClassLoader 加载的 Class 为什么 getClassLoader为null;
             Util.i("sun classLoader:%s", Sun.class.getClassLoader());
+
+            Util.i("SecurityManager classLoader:%s", SecurityManager.class.getClassLoader());
+
         } catch (Exception e) {
             e.printStackTrace();
         }

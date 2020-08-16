@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="base-tool-lib" target="1.7" />
+      <module name="jenkins-tools" target="1.7" />
       <module name="library-java-test-main" target="1.7" />
     </bytecodeTargetLevel>
   </component>

@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/library/bulgy-report" />
             <option value="$PROJECT_DIR$/library/jar-searcher" />
             <option value="$PROJECT_DIR$/library/java-test-main" />
+            <option value="$PROJECT_DIR$/library/jenkins-tools" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
