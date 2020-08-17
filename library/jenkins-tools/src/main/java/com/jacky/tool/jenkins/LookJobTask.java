@@ -9,6 +9,7 @@ import com.offbytwo.jenkins.model.BuildWithDetails;
 import com.offbytwo.jenkins.model.Job;
 import com.offbytwo.jenkins.model.JobWithDetails;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public final class LookJobTask implements Runnable {
             Util.sleepSafely(JenkinsVisitor.LOOK_JOB_DETAIL_INTERVAL);
         }
 
-        Util.r("---------------------- DUMP JOB STATUS ----------------------");
+        Util.r("\n---------------------- DUMP JOB STATUS ----------------------\n");
         for (JobResponse response : jobResponses) {
             Util.r(response.dump());
         }
@@ -94,23 +95,30 @@ public final class LookJobTask implements Runnable {
 
         int showLength = jobResponse.getShowLength();
         if (details.isBuilding()) {
-            details = build.details();
-            final String consoleOutputText = details.getConsoleOutputText();
-            final int length = consoleOutputText.length();
-            if (length > showLength) {
-                if (lastJobResponse != jobResponse) {
-                    Util.r("\n-------------------------- [%s] --------------------------\n", job.getName());
-                    lastJobResponse = jobResponse;
-                }
-
-                Util.r(consoleOutputText.substring(showLength, length));
-                jobResponse.setShowLength(length);
-            }
+            dumpLog(jobResponse, build, job, showLength);
         } else {
             if (jobResponse.getJobStatus() != JobStatus.success) {
+                // 最后再 dump 一次
+                dumpLog(jobResponse, build, job, showLength);
                 jobResponse.setJobStatus(JobStatus.success);
                 copy.remove(jobResponse);
             }
+        }
+    }
+
+    private void dumpLog(JobResponse jobResponse, Build build, Job job, int showLength) throws IOException {
+        BuildWithDetails details;
+        details = build.details();
+        final String consoleOutputText = details.getConsoleOutputText();
+        final int length = consoleOutputText.length();
+        if (length > showLength) {
+            if (lastJobResponse != jobResponse) {
+                Util.r("\n-------------------------- [%s] --------------------------\n", job.getName());
+                lastJobResponse = jobResponse;
+            }
+
+            Util.r(consoleOutputText.substring(showLength, length));
+            jobResponse.setShowLength(length);
         }
     }
 }
