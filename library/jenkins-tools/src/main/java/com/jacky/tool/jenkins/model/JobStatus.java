@@ -7,5 +7,6 @@ public enum JobStatus {
     init,
     onGoing,
     success,
-    error
+    error,
+    cancel
 }

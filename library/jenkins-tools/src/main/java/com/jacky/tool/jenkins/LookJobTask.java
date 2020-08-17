@@ -5,6 +5,7 @@ import com.jacky.tool.jenkins.model.JobResponse;
 import com.jacky.tool.jenkins.model.JobStatus;
 import com.jacky.tool.util.Util;
 import com.offbytwo.jenkins.model.Build;
+import com.offbytwo.jenkins.model.BuildResult;
 import com.offbytwo.jenkins.model.BuildWithDetails;
 import com.offbytwo.jenkins.model.Job;
 import com.offbytwo.jenkins.model.JobWithDetails;
@@ -97,10 +98,23 @@ public final class LookJobTask implements Runnable {
         if (details.isBuilding()) {
             dumpLog(jobResponse, build, job, showLength);
         } else {
-            if (jobResponse.getJobStatus() != JobStatus.success) {
+            final BuildResult result = details.getResult();
+            JobStatus status = null;
+
+            if (result == BuildResult.ABORTED) {
+                status = JobStatus.cancel;
+            } else if (result == BuildResult.BUILDING) {
+                status = JobStatus.onGoing;
+            } else if (result == BuildResult.FAILURE) {
+                status = JobStatus.error;
+            } else if (result == BuildResult.SUCCESS) {
+                status = JobStatus.success;
+            }
+
+            if (status != null && jobResponse.getJobStatus() != status) {
                 // 最后再 dump 一次
                 dumpLog(jobResponse, build, job, showLength);
-                jobResponse.setJobStatus(JobStatus.success);
+                jobResponse.setJobStatus(status);
                 copy.remove(jobResponse);
             }
         }
