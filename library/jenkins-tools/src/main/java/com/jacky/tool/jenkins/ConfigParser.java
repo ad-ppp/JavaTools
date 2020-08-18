@@ -14,7 +14,7 @@ import java.util.List;
 public class ConfigParser {
 
     public static final String PARSER_RULE =
-        "{\"name\":\"123\",\"params\":[{\"key\":\"123\",\"value\":\"222\"}],\"showAvailableJobs\":false}";
+        "{\"name\":\"android.test.blackboard.release.multijob\",\"params\":[{\"key\":\"x_branch\",\"value\":\"v566\"},{\"key\":\"m_branch\",\"value\":\"v566\"}],\"local\":{\"user\":\"user\",\"token\":\"token\",\"url\":\"jenkins_url\"},\"showAvailableJobs\":false}";
 
     /**
      * @param configPath
@@ -28,26 +28,42 @@ public class ConfigParser {
         }
 
         final String json = FileUtils.readFile(configPath);
-        final Config config = JSON.parseObject(json, Config.class);
-        if (config == null) {
+        final Configuration configuration = JSON.parseObject(json, Configuration.class);
+        if (configuration == null) {
             throw new IllegalStateException("json parser exception");
         }
 
         final List<String> arguments = new ArrayList<>();
-        if (Strings.isNotBlank(config.getName())) {
+        if (Strings.isNotBlank(configuration.getName())) {
             arguments.add(RequestModule.PARAMETER_NAME);
-            arguments.add(config.getName());
+            arguments.add(configuration.getName());
         }
 
-        final List<Config.ParamsBean> params = config.getParams();
+        final List<Configuration.ParamsBean> params = configuration.getParams();
         if (params != null && !params.isEmpty()) {
-            for (Config.ParamsBean param : params) {
+            for (Configuration.ParamsBean param : params) {
                 arguments.add(String.format("-D%s=%s", param.getKey(), param.getValue()));
             }
         }
 
-        if (config.isShowAvailableJobs()) {
+        if (configuration.isShowAvailableJobs()) {
             arguments.add(RequestModule.PARAMETER_SHOW_AVAILABLE_JOBS);
+        }
+
+        final Configuration.LocalBean local = configuration.getLocal();
+        if (Strings.isNotBlank(local.getUser())) {
+            arguments.add(LocalConfig.PARAMETER_USERNAME);
+            arguments.add(local.getUser());
+        }
+
+        if (Strings.isNotBlank(local.getToken())) {
+            arguments.add(LocalConfig.PARAMETER_TOKEN);
+            arguments.add(local.getToken());
+        }
+
+        if (Strings.isNotBlank(local.getUrl())) {
+            arguments.add(LocalConfig.PARAMETER_URL);
+            arguments.add(local.getUrl());
         }
 
         return arguments.toArray(new String[1]);

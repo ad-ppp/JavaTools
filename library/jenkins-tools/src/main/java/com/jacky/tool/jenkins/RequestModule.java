@@ -3,6 +3,7 @@ package com.jacky.tool.jenkins;
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.beust.jcommander.ParametersDelegate;
 import com.jacky.tool.base.BaseJModel;
 
 import java.util.HashMap;
@@ -32,6 +33,9 @@ public class RequestModule extends BaseJModel {
     @Parameter(names = {"--name", PARAMETER_NAME}, description = "The name of job you build")
     public String jobName;
 
+    @ParametersDelegate
+    public LocalConfig delegate = new LocalConfig();
+
     @Override
     public String toString() {
         return "RequestModule{" +
@@ -39,6 +43,7 @@ public class RequestModule extends BaseJModel {
             ", config='" + config + '\'' +
             ", params=" + params +
             ", jobName='" + jobName + '\'' +
+            ", delegate=" + delegate +
             ", help=" + help +
             '}';
     }

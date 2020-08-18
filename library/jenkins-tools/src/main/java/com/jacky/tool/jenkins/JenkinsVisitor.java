@@ -15,11 +15,7 @@ import com.offbytwo.jenkins.model.QueueReference;
 
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,55 +49,11 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
     private final static int MAX_TRY_COUNT = 30;
     public final static int LOOK_JOB_DETAIL_INTERVAL = 400; //ms
 
-    public final static String JENKINS_NAME = "JENKINS_NAME";
-    public final static String JENKINS_TOKEN = "JENKINS_TOKEN";
-
-    public final static String CONFIG_FILE = "jenkins.properties";
-
     public static void main(String[] args) {
+        JCommander jCommander = null;
         try {
-            // read name and token
-            final File file = new File("./" + CONFIG_FILE);
-            if (!file.exists()) {
-                throw new IllegalStateException("You should config " + JENKINS_NAME + " and "
-                    + JENKINS_TOKEN + " in " + CONFIG_FILE +
-                    " and the file is not exist");
-            }
-
-            String name = null;
-            String token = null;
-
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                line = line.trim();
-                if (line.startsWith(JENKINS_NAME)) {
-                    name = line.substring(JENKINS_NAME.length() + 1);
-                }
-
-                if (line.startsWith(JENKINS_TOKEN)) {
-                    token = line.substring(JENKINS_TOKEN.length() + 1);
-                }
-
-                if (name != null && token != null) {
-                    break;
-                }
-
-                line = bufferedReader.readLine();
-            }
-            Util.closeQuietly(bufferedReader);
-
-            if (Strings.isNullOrEmpty(name)) {
-                throw new IllegalStateException("You should config " + JENKINS_NAME
-                    + " and " + JENKINS_TOKEN + " in " + CONFIG_FILE);
-            }
-
-            final URI uri = new URI("https://jenkins.xiaoheiban.cn/");
-            final HttpClientBuilder builder = HttpClientBuilder.create();
-            final JenkinsHttpClient client = new JenkinsHttpClient(uri, builder, name, token);
-            final JenkinsServer jenkinsServer = new JenkinsServer(client);
             final RequestModule requestModule = new RequestModule();
-            final JCommander jCommander = JCommander.newBuilder()
+            jCommander = JCommander.newBuilder()
                 .addObject(requestModule)
                 .build();
             jCommander.setProgramName("Jenkins-Tool");
@@ -111,9 +63,33 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
                 jCommander.parse(ConfigParser.parse(requestModule.config));
             }
 
+            // check local config
+            final LocalConfig delegate = requestModule.delegate;
+            if (Strings.isNullOrEmpty(delegate.user)) {
+                throw new IllegalStateException("no user found");
+            }
+
+            if (Strings.isNullOrEmpty(delegate.token)) {
+                throw new IllegalStateException("no private access token found");
+            }
+
+            if (Strings.isNullOrEmpty(delegate.url)) {
+                throw new IllegalStateException("no jenkins url found");
+            }
+
+            final URI uri = new URI(delegate.url);
+            final HttpClientBuilder builder = HttpClientBuilder.create();
+            final JenkinsHttpClient client = new JenkinsHttpClient(uri, builder, delegate.user, delegate.token);
+            final JenkinsServer jenkinsServer = new JenkinsServer(client);
+
+
             new JenkinsVisitor(jenkinsServer, jCommander, requestModule).start();
         } catch (Exception e) {
             e.printStackTrace();
+
+            if (jCommander != null) {
+                jCommander.usage();
+            }
         }
     }
 

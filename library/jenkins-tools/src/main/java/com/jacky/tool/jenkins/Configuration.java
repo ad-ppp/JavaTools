@@ -5,15 +5,16 @@ import java.util.List;
 /**
  * Created by Jacky on 2020/8/15
  */
-public final class Config {
-
+public final class Configuration {
     /**
-     * name : 123
-     * params : [{"key":"123","value":"222"}]
+     * name : android.test.blackboard.release.multijob
+     * params : [{"key":"x_branch","value":"v566"},{"key":"m_branch","value":"v566"}]
+     * local : {"user":"jacky","token":"123","url":"xiaoheiban"}
      * showAvailableJobs : false
      */
 
     private String name;
+    private LocalBean local;
     private boolean showAvailableJobs;
     private List<ParamsBean> params;
 
@@ -23,6 +24,14 @@ public final class Config {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LocalBean getLocal() {
+        return local;
+    }
+
+    public void setLocal(LocalBean local) {
+        this.local = local;
     }
 
     public boolean isShowAvailableJobs() {
@@ -41,10 +50,46 @@ public final class Config {
         this.params = params;
     }
 
+    public static class LocalBean {
+        /**
+         * user : jacky
+         * token : 123
+         * url : xiaoheiban
+         */
+
+        private String user;
+        private String token;
+        private String url;
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+    }
+
     public static class ParamsBean {
         /**
-         * key : 123
-         * value : 222
+         * key : x_branch
+         * value : v566
          */
 
         private String key;
