@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/library/jar-searcher" />
             <option value="$PROJECT_DIR$/library/java-test-main" />
             <option value="$PROJECT_DIR$/library/jenkins-tools" />
+            <option value="$PROJECT_DIR$/library/view-node-client" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

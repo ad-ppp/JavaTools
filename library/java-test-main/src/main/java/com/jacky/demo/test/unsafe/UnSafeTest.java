@@ -3,10 +3,8 @@ package com.jacky.demo.test.unsafe;
 import com.jacky.tool.util.Util;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
-import sun.misc.Unsafe;
+//import sun.misc.Unsafe;
 
 /**
  * Created by Jacky on 2020/6/9
@@ -29,17 +27,17 @@ public class UnSafeTest {
         }
 
         // normal
-        try {
-            final Class<?> unSafeClass = Class.forName("sun.misc.Unsafe");
-            final Field field = unSafeClass.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            final Unsafe unsafe = (Unsafe) field.get(null);
-            final Method allocateInstance = unSafeClass.getMethod("allocateInstance", Class.class);
-            final Student student = (Student) allocateInstance.invoke(unsafe, Student.class);
-            Util.i(student.getAge());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            final Class<?> unSafeClass = Class.forName("sun.misc.Unsafe");
+//            final Field field = unSafeClass.getDeclaredField("theUnsafe");
+//            field.setAccessible(true);
+//            final Unsafe unsafe = (Unsafe) field.get(null);
+//            final Method allocateInstance = unSafeClass.getMethod("allocateInstance", Class.class);
+//            final Student student = (Student) allocateInstance.invoke(unsafe, Student.class);
+//            Util.i(student.getAge());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     static class Student {

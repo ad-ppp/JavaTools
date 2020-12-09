@@ -2,9 +2,15 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="adb-assistant" target="1.7" />
+      <module name="adb-assistant-protocols" target="1.7" />
       <module name="base-tool-lib" target="1.7" />
       <module name="jenkins-tools" target="1.7" />
+      <module name="lib" target="1.7" />
       <module name="library-java-test-main" target="1.7" />
+      <module name="view-node-client" target="1.7" />
+      <module name="xhb-assistant" target="1.7" />
+      <module name="xhb-assistant-protocol" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

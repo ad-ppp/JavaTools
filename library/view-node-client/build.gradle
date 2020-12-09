@@ -1,14 +1,16 @@
 apply plugin: 'java'
+apply plugin: 'kotlin'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.offbytwo.jenkins:jenkins-client:0.3.8'
-    implementation 'com.alibaba:fastjson:1.2.73'
-    implementation project(':base-tool-lib')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
 ext {
-    javaMainClass = "com.jacky.tool.jenkins.JenkinsVisitor"
+    javaMainClass = "com.jacky.view.node.ViewNodeClient"
 }
 
 def deploy = [

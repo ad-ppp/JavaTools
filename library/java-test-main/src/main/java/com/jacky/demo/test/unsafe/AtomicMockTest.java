@@ -15,14 +15,14 @@ public final class AtomicMockTest {
     static {
         Util.i("hello static model");
 
-        try {
-            final Unsafe U = Util.getUnsafe();
-            AtomicMockTest.U = U;
-            VALUE = U.objectFieldOffset(AtomicMockTest.class.getDeclaredField("value"));
-            Util.i("value in static=%d", VALUE);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            final Unsafe U = Util.getUnsafe();
+//            AtomicMockTest.U = U;
+//            VALUE = U.objectFieldOffset(AtomicMockTest.class.getDeclaredField("value"));
+//            Util.i("value in static=%d", VALUE);
+//        } catch (NoSuchFieldException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public AtomicMockTest(int i) {
