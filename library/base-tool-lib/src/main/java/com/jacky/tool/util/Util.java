@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Jacky on 2020/5/23
@@ -20,7 +21,7 @@ public class Util {
      */
     public static void r(Object format, Object... obj) {
         if (format instanceof String) {
-            System.out.println(String.format((String) format, obj));
+            System.out.println(String.format(Locale.ENGLISH, (String) format, obj));
             return;
         }
 

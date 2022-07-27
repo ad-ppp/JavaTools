@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="adb-assistant" target="1.7" />
       <module name="adb-assistant-protocols" target="1.7" />
       <module name="base-tool-lib" target="1.7" />
+      <module name="JavaTools.bulgy-report" target="1.8" />
+      <module name="JavaTools.view-node-client" target="1.8" />
       <module name="jenkins-tools" target="1.7" />
       <module name="lib" target="1.7" />
       <module name="library-java-test-main" target="1.7" />

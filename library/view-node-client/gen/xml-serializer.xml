@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?><n1:manifest n2:compileSdkVersion="28" xmlns:n1="xmlns:android=&quot;http://schemas.android.com/apk/res/android" xmlns:n2="android"><!--A TextView --><n2:TextView n2:layout_width="match_parent" n2:layout_height="match_parent" /></n1:manifest>

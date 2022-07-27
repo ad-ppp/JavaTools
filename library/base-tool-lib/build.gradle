@@ -1,21 +1,9 @@
-import org.gradle.api.internal.artifacts.configurations.DefaultConfiguration
-
 apply plugin: 'java-library'
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api "com.beust:jcommander:1.71"
+    api "com.beust:jcommander:1.82"
 }
-
-project.afterEvaluate {
-    def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
-    canBeResolvedField.setAccessible(true)
-    canBeResolvedField.set(configurations.implementation, true)
-    canBeResolvedField.set(configurations.api, true)
-}
-
-sourceCompatibility = "7"
-targetCompatibility = "7"
 
 jar {
     manifestContentCharset 'utf-8'
@@ -34,22 +22,14 @@ jar {
             println "implementation it path: ${it.getAbsolutePath()}"
             it.isDirectory() ? it : zipTree(it)
         }
-        configurations.runtime.collect {
-            println "runtime it path: ${it.getAbsolutePath()}"
-            it.isDirectory() ? it : zipTree(it)
-        }
     }
 }
 
 task clearJar(type: Delete) {
-    println "task clearJar"
-
     delete 'build/libs/'
 }
 
 task copyJar(type: Copy) {
-    println "task copyJar"
-
     def file = new File("${project.buildDir}/libs/${project.name}.jar")
     doFirst {
         println "copyJar check file exist!"
@@ -59,22 +39,9 @@ task copyJar(type: Copy) {
     }
 
     from file
-    into "${project.rootProject.getRootDir()}/tools/base/"
+    into "${rootDir}/tools/base/"
 }
 
 task release {
     dependsOn = [build, copyJar]
-    doFirst {
-        println "release doFirst"
-    }
-
-    doLast {
-        println "release doLast"
-    }
 }
-
-// 指定任务 clearJar 必须在 copyJar 之后执行
-//clearJar.mustRunAfter copyJar
-
-// for testing
-apply from: './test.gradle'

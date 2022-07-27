@@ -1,40 +1,16 @@
-include ':app', ':jar-searcher', ':base-tool-lib', ':bulgy-report', ':asm-tools', ':java-test-main'
-include ':apk-tool', ':jenkins-tools',':view-node-client'
+include ':app'
 
 rootProject.name = 'JavaTools'
 
-project(':base-tool-lib').projectDir = new File(settingsDir, './library/base-tool-lib')
-project(':jar-searcher').projectDir = new File(settingsDir, './library/jar-searcher')
-project(':bulgy-report').projectDir = new File(settingsDir, './library/bulgy-report')
-project(':asm-tools').projectDir = new File(settingsDir, './library/asm-tools')
-project(':java-test-main').projectDir = new File(settingsDir, './library/java-test-main')
-project(':apk-tool').projectDir = new File(settingsDir, './library/apk-tool')
-project(':jenkins-tools').projectDir = new File(settingsDir, './library/jenkins-tools')
-project(':view-node-client').projectDir = new File(settingsDir, './library/view-node-client')
+def libs = [
+    'jar-searcher',
+    'base-tool-lib',
+    'asm-tools',
+    'apk-tool',
+    'jenkins-tools'
+]
 
-//project(':adb-assistant').projectDir = new File(settingsDir, './library/adb-assistant')
-//project(':adb-assistant-protocols').projectDir = new File(settingsDir, './library/adb-assistant-protocols')
-
-gradle.addBuildListener(new BuildListener() {
-    void buildStarted(Gradle var1) {
-        println '开始构建'
-    }
-
-    void settingsEvaluated(Settings var1) {
-        println 'settings评估完成（settings.gradle中代码执行完毕）'
-        // var1.gradle.rootProject 这里访问Project对象时会报错，还未完成Project的初始化
-    }
-
-    void projectsLoaded(Gradle var1) {
-        println '项目结构加载完成（初始化阶段结束）'
-        println '初始化结束，可访问根项目：' + var1.gradle.rootProject
-    }
-
-    void projectsEvaluated(Gradle var1) {
-        println '所有项目评估完成（配置阶段结束）'
-    }
-
-    void buildFinished(BuildResult var1) {
-        println '构建结束 '
-    }
-})
+libs.forEach{lib->
+    include(":$lib")
+    project(":$lib").projectDir = new File(settingsDir, "./library/$lib")
+}

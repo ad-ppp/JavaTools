@@ -1,0 +1,7 @@
+#!/bin/bash
+
+__gradle_exec(){
+	./gradlew "${@}";
+}
+
+__gradle_exec clean

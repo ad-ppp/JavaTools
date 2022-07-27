@@ -7,6 +7,7 @@ import com.jacky.tool.util.Strings;
 import com.jacky.tool.util.Util;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
+import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.Executable;
 import com.offbytwo.jenkins.model.Job;
 import com.offbytwo.jenkins.model.JobWithDetails;
@@ -43,11 +44,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * <p>
  * TODO: add action to scan log of build
+ * Capture SIGINT in Java
+ * https://stackoverflow.com/questions/2541475/capture-sigint-in-java
  */
 public class JenkinsVisitor extends BaseJCommand<RequestModule> {
     private final JenkinsServer jenkinsServer;
     private final static int MAX_TRY_COUNT = 30;
     public final static int LOOK_JOB_DETAIL_INTERVAL = 400; //ms
+    private Build build;
 
     public static void main(String[] args) {
         JCommander jCommander = null;
@@ -86,7 +90,6 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
             new JenkinsVisitor(jenkinsServer, jCommander, requestModule).start();
         } catch (Exception e) {
             e.printStackTrace();
-
             if (jCommander != null) {
                 jCommander.usage();
             }
@@ -96,6 +99,33 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
     public JenkinsVisitor(JenkinsServer jenkinsServer, JCommander jCommander, RequestModule arguments) {
         super(jCommander, arguments);
         this.jenkinsServer = jenkinsServer;
+    }
+
+    @Override
+    protected void start() {
+        hookJavaPsTerminate();
+        super.start();
+    }
+
+    private void hookJavaPsTerminate() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                JenkinsVisitor.this.doOnTerminate();
+            }
+        });
+    }
+
+    // seems no effort
+    private void doOnTerminate() {
+        if (build != null) {
+            try {
+                Util.r("stop job[%d] task", build.getNumber());
+                build.Stop();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -147,7 +177,12 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
                 jobRequests.add(new JobRequest(subJob, nextBuildNumber));
             }
         }
-        executeJob(entryJob, params);
+        final Executable executable = executeJob(entryJob, params);
+        final Long number = executable.getNumber();
+        if (number != null) {
+            build = entryJob.getBuildByNumber(number.intValue());
+            Util.r("executable, [url:%s][id:%d]", executable.getUrl(), number);
+        }
 
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         // 开启线程轮训每个job状态
@@ -166,7 +201,7 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
         };
     }
 
-    private void executeJob(Job job, Map<String, String> params) throws Exception {
+    private Executable executeJob(Job job, Map<String, String> params) throws Exception {
         final QueueReference queueReference = params == null ? job.build() : job.build(params);
         Executable executable;
         QueueItem queueItem;
@@ -178,6 +213,8 @@ public class JenkinsVisitor extends BaseJCommand<RequestModule> {
             queueItem = jenkinsServer.getQueueItem(queueReference);
             executable = queueItem.getExecutable();
         } while (executable == null && tryCount < MAX_TRY_COUNT);
+
+        return executable;
     }
 
     private void showAvailableJobs() {

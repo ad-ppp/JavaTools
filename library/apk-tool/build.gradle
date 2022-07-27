@@ -1,16 +1,8 @@
-import org.gradle.api.internal.artifacts.configurations.DefaultConfiguration
-
 apply plugin: 'java'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':base-tool-lib')
-}
-
-project.afterEvaluate {
-    def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
-    canBeResolvedField.setAccessible(true)
-    canBeResolvedField.set(configurations.implementation, true)
 }
 
 jar {
@@ -31,15 +23,6 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
     }
-    from {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-        configurations.runtime.resolve().collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
 }
 
 task clearJar(type: Delete) {
@@ -52,3 +35,7 @@ task copyJar(type: Copy) {
 }
 
 task release(type: Copy, dependsOn: [build, clearJar, copyJar])
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}

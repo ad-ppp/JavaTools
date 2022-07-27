@@ -5,7 +5,7 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="delegatedBuild" value="false" />
-        <option name="testRunner" value="PLATFORM" />
+        <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
@@ -15,14 +15,10 @@
             <option value="$PROJECT_DIR$/library/apk-tool" />
             <option value="$PROJECT_DIR$/library/asm-tools" />
             <option value="$PROJECT_DIR$/library/base-tool-lib" />
-            <option value="$PROJECT_DIR$/library/bulgy-report" />
             <option value="$PROJECT_DIR$/library/jar-searcher" />
-            <option value="$PROJECT_DIR$/library/java-test-main" />
             <option value="$PROJECT_DIR$/library/jenkins-tools" />
-            <option value="$PROJECT_DIR$/library/view-node-client" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

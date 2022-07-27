@@ -1,9 +1,8 @@
 import org.gradle.api.internal.artifacts.configurations.DefaultConfiguration
 
-project.afterEvaluate {
-    def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
-    canBeResolvedField.setAccessible(true)
-    canBeResolvedField.set(configurations.implementation, true)
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 jar {
@@ -22,15 +21,6 @@ jar {
         exclude 'META-INF/*.DSA'
         exclude 'META-INF/*.RSA'
         configurations.implementation.resolve().collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    from {
-        exclude 'META-INF/MANIFEST.MF'
-        exclude 'META-INF/*.SF'
-        exclude 'META-INF/*.DSA'
-        exclude 'META-INF/*.RSA'
-        configurations.runtime.resolve().collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
