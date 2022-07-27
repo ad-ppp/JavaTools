@@ -4,7 +4,7 @@ rootProject.name = 'JavaTools'
 
 def libs = []
 
-new File("config/text/libs.txt").eachLine {
+new File("gradle/config/libs.txt").eachLine {
     libs << it
 }
 

@@ -7,9 +7,6 @@ Useful tools written by Java
 - Java: 
 
 
-
-
-
 ## TOOLS
 
 ### Projects
@@ -27,10 +24,8 @@ Useful tools written by Java
 ### Bash
 
 - clean
-- deploy 
-
-
-
+- deploy
 
 ## Thanks
  - https://github.com/cbeust/jcommander
+ - https://github.com/jacky1234/module-mate-plugin
