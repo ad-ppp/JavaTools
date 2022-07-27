@@ -17,7 +17,7 @@ def deploy = [
 ]
 ext.deploy = deploy
 
-apply from: "${project.getRootDir()}/config/jar.gradle"
+apply from: "$rootDir/config/gradle/jar.gradle"
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8

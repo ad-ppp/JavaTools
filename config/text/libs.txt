@@ -1,0 +1,4 @@
+base-tool-lib
+jar-searcher
+asm-tools
+jenkins-tools

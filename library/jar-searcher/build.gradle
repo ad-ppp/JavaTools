@@ -15,4 +15,4 @@ def deploy = [
 ]
 ext.deploy = deploy
 
-apply from: "${project.getRootDir()}/config/jar.gradle"
+apply from: "$rootDir/config/gradle/jar.gradle"

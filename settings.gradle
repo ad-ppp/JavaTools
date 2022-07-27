@@ -2,12 +2,11 @@ include ':app'
 
 rootProject.name = 'JavaTools'
 
-def libs = [
-    'base-tool-lib',
-    'jar-searcher',
-    'asm-tools',
-    'jenkins-tools'
-]
+def libs = []
+
+new File("config/text/libs.txt").eachLine {
+    libs << it
+}
 
 libs.forEach { lib ->
     include(":$lib")

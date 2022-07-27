@@ -1,0 +1,3 @@
+#!/bin/bash
+# 用于git的里程碑式操作
+echo "${0} todo..."
