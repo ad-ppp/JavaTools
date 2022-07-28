@@ -5,7 +5,7 @@ rootProject.name = 'JavaTools'
 def libs = []
 
 new File("gradle/config/libs.txt").eachLine {
-    libs << it
+    libs << it.trim()
 }
 
 libs.forEach { lib ->

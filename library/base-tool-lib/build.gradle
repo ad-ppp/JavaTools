@@ -19,29 +19,20 @@ jar {
             it.isDirectory() ? it : zipTree(it)
         }
         configurations.implementation.collect {
-            println "implementation it path: ${it.getAbsolutePath()}"
             it.isDirectory() ? it : zipTree(it)
         }
     }
 }
 
-task clearJar(type: Delete) {
-    delete 'build/libs/'
-}
-
 task copyJar(type: Copy) {
-    def file = new File("${project.buildDir}/libs/${project.name}.jar")
-    doFirst {
-        println "copyJar check file exist!"
-        if (!file.exists()) {
-            throw new IllegalStateException("no file exists")
-        }
-    }
-
-    from file
-    into "${rootDir}/tools/base/"
+    from new File("$buildDir/libs/${project.name}.jar")
+    into "$rootDir/tools/base/"
 }
 
 task release {
     dependsOn = [build, copyJar]
+}
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
