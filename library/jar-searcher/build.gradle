@@ -10,8 +10,8 @@ ext {
 }
 
 def deploy = [
-        'version': '1.0.5',
-        'author' : 'jacky'
+    'version': '1.0.5',
+    'author' : 'jacky'
 ]
 ext.deploy = deploy
 
