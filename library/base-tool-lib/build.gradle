@@ -15,7 +15,6 @@ jar {
     }
     from {
         configurations.api.collect {
-            println "api it path: ${it.getAbsolutePath()}"
             it.isDirectory() ? it : zipTree(it)
         }
         configurations.implementation.collect {
