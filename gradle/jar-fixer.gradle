@@ -1,0 +1,3 @@
+// 解决在执行
+// ./gradlew :base-tool-lib:compileJava命令，会清除 base-tool-lib/build/libs 中生成的jar文件
+

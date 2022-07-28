@@ -27,27 +27,25 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 
     childProjects.values().forEach(project ->
-                                       delete project.buildDir
+        delete project.buildDir
     )
 }
 
-afterEvaluate {
-    subprojects {
-        afterEvaluate { Project project ->
-            def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
-            canBeResolvedField.setAccessible(true)
-            if (hasConfiguration(project, 'implementation')) {
-                canBeResolvedField.set(project.configurations.implementation, true)
-            }
-            if (hasConfiguration(project, 'api')) {
-                canBeResolvedField.set(project.configurations.api, true)
-            }
+subprojects {
+    afterEvaluate { Project project ->
+        def canBeResolvedField = DefaultConfiguration.class.getDeclaredField('canBeResolved')
+        canBeResolvedField.setAccessible(true)
+        if (hasConfiguration(project, 'implementation')) {
+            canBeResolvedField.set(project.configurations.implementation, true)
+        }
+        if (hasConfiguration(project, 'api')) {
+            canBeResolvedField.set(project.configurations.api, true)
+        }
 
-            if (project.pluginManager.hasPlugin("java")) {
-                project.java {
-                    sourceCompatibility = JavaVersion.VERSION_1_8
-                    targetCompatibility = JavaVersion.VERSION_1_8
-                }
+        if (project.pluginManager.hasPlugin("java")) {
+            project.java {
+                sourceCompatibility = JavaVersion.VERSION_1_8
+                targetCompatibility = JavaVersion.VERSION_1_8
             }
         }
     }
